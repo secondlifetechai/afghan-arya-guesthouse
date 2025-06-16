@@ -1,23 +1,19 @@
-import { access } from '@/utils/access'
 import { CollectionConfig } from 'payload'
+import { createHash } from 'crypto'
 
-export const Staff: CollectionConfig = {
+const Staff: CollectionConfig = {
   slug: 'staff',
-  access: access,
   auth: true,
   admin: {
     useAsTitle: 'email',
   },
+  access: {
+    read: ({ req: { user } }) => !!user,
+    create: ({ req: { user } }) => user?.role === 'admin',
+    update: ({ req: { user } }) => user?.role === 'admin',
+    delete: ({ req: { user } }) => user?.role === 'admin',
+  },
   fields: [
-    {
-      name: 'type',
-      type: 'select',
-      options: [
-        { label: 'Admin', value: 'admin' },
-        { label: 'Staff', value: 'staff' },
-      ],
-      required: true,
-    },
     {
       name: 'firstName',
       type: 'text',
@@ -29,17 +25,24 @@ export const Staff: CollectionConfig = {
       required: true,
     },
     {
-      name: 'phoneNumber',
-      type: 'text',
+      name: 'role',
+      type: 'select',
+      options: ['admin', 'staff'],
+      required: true,
+      defaultValue: 'staff',
     },
     {
-      name: 'address',
-      type: 'text',
+      name: 'image',
+      type: 'upload',
+      relationTo: 'media',
     },
     {
-      name: 'branch',
+      name: 'hostel',
       type: 'relationship',
-      relationTo: 'branches',
+      relationTo: 'hostels',
+      hasMany: true,
+      required: true,
     },
   ],
 }
+export default Staff

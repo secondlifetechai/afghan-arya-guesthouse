@@ -1,53 +1,48 @@
 import { CollectionConfig } from 'payload'
 
-const access = {
-  create: ({ req: { user } }: any) =>
-    user && (user.collection === 'users' || user.collection === 'staff'),
-  read: ({ req: { user } }: any) =>
-    user && (user.collection === 'users' || user.collection === 'staff'),
-  update: ({ req: { user } }: any) =>
-    user && (user.collection === 'users' || user.collection === 'staff'),
-  delete: ({ req: { user } }: any) =>
-    user && (user.collection === 'users' || user.collection === 'staff'),
-}
-
-export const Bookings: CollectionConfig = {
+const Bookings: CollectionConfig = {
   slug: 'bookings',
-  access: access,
   admin: {
-    useAsTitle: 'bookingRef',
+    useAsTitle: 'status',
+  },
+  access: {
+    read: ({ req: { user } }) => !!user,
+    create: ({ req: { user } }) => (user ? ['admin', 'staff'].includes(user?.role) : false),
+    update: ({ req: { user } }) => (user ? ['admin', 'staff'].includes(user?.role) : false),
+    delete: ({ req: { user } }) => user?.role === 'admin',
   },
   fields: [
-    {
-      name: 'bookingRef',
-      type: 'text',
-      required: true,
-    },
-    {
-      name: 'customer',
-      type: 'relationship',
-      relationTo: 'customers',
-      required: true,
-    },
-    {
-      name: 'checkIn',
-      type: 'date',
-      required: true,
-    },
-    {
-      name: 'checkOut',
-      type: 'date',
-      required: true,
-    },
     {
       name: 'staff',
       type: 'relationship',
       relationTo: 'staff',
+      required: true,
     },
     {
-      name: 'bed',
+      name: 'room',
       type: 'relationship',
-      relationTo: 'beds',
+      relationTo: 'rooms',
+      required: true,
+    },
+    {
+      name: 'hostel',
+      type: 'relationship',
+      relationTo: 'hostels',
+      required: true,
+    },
+    {
+      name: 'checkInDate',
+      type: 'date',
+      required: true,
+    },
+    {
+      name: 'checkOutDate',
+      type: 'date',
+      required: true,
+    },
+    {
+      name: 'totalPrice',
+      type: 'number',
       required: true,
     },
     {
@@ -58,23 +53,34 @@ export const Bookings: CollectionConfig = {
     {
       name: 'bookingFrom',
       type: 'select',
-      options: [
-        { label: 'Booking.com', value: 'booking_com' },
-        { label: 'HostelWorld', value: 'hostelworld' },
-        { label: 'Agoda', value: 'agoda' },
-        { label: 'Walk In', value: 'walk_in' },
-      ],
+      options: ['booking.com', 'hostelWorld', 'Agoda', 'walk in'],
       required: true,
     },
     {
-      name: 'modeOfPayment',
+      name: 'paymentMethod',
       type: 'select',
-      options: [
-        { label: 'Cash', value: 'cash' },
-        { label: 'Card', value: 'card' },
-        { label: 'Online', value: 'online' },
-      ],
+      options: ['cash', 'card', 'online'],
+      required: true,
+    },
+    {
+      name: 'isPaid',
+      type: 'checkbox',
+      defaultValue: false,
+    },
+    {
+      name: 'status',
+      type: 'select',
+      options: ['pending', 'confirmed', 'cancelled'],
+      defaultValue: 'pending',
+      required: true,
+    },
+    {
+      name: 'guests',
+      type: 'relationship',
+      relationTo: 'guests',
+      hasMany: true,
       required: true,
     },
   ],
 }
+export default Bookings

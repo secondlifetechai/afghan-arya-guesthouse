@@ -38,6 +38,15 @@ export default function Header() {
               {route.name}
             </Link>
           ))}
+
+          <Link
+            href="/login"
+            className={`text-base font-medium transition-colors hover:text-[#248a23] ${
+              pathname === '/login' ? 'text-[#248a23]' : 'text-gray-600'
+            }`}
+          >
+            Login
+          </Link>
         </nav>
 
         <div className="hidden md:flex items-center gap-4">

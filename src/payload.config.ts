@@ -10,14 +10,10 @@ import sharp from 'sharp'
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import brevoAdapter from './utils/brevoAdapter'
-import { Branches } from './collections/Branches'
-import { Apartments } from './collections/Apartments'
-import { Categories } from './collections/Categories'
-import { Staff } from './collections/Staff'
-import { Settings } from './collections/Settings'
-import { Customers } from './collections/Customers'
-import { Beds } from './collections/Beds'
-import { Bookings } from './collections/Bookings'
+import Hostels from './collections/Hostels'
+import Rooms from './collections/Rooms'
+import Staff from './collections/Staff'
+import Guests from './collections/Guests'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -30,18 +26,7 @@ export default buildConfig({
     },
   },
   email: brevoAdapter(),
-  collections: [
-    Users,
-    Media,
-    Staff,
-    Branches,
-    Apartments,
-    Categories,
-    Beds,
-    Bookings,
-    Customers,
-    Settings,
-  ],
+  collections: [Users, Media, Hostels, Rooms, Staff, Guests],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
